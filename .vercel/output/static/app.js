@@ -1104,4 +1104,51 @@ async function checkoutViaWhatsAppDirect() {
   }
 
   const settings = storeApp.getSettings();
-  const storePhone = (settings.whatsappNumber || '919944910653'
+  const storePhone = (settings.whatsappNumber || '919944910653').replace(/[^0-9]/g, '');
+  const orderId = 'SMH-WA-' + Date.now().toString().slice(-5);
+  const total = storeApp.getCartTotal();
+  const subtotal = storeApp.getCartSubtotal();
+  const discount = storeApp.getDiscountAmount();
+  const shipping = storeApp.getShippingFee();
+
+  const itemsList = storeApp.cart.map(i => `  • ${i.title} (Qty: ${i.quantity}) - ₹${(i.price * i.quantity).toLocaleString('en-IN')}`).join('\n');
+
+  const msg = encodeURIComponent(
+    `🛍️ *NEW DIRECT ORDER VIA WHATSAPP*\nOrder Ref: #${orderId}\n\n*Cart Items:*\n${itemsList}\n\n*Subtotal:* ₹${subtotal.toLocaleString('en-IN')}\n*Delivery:* ${shipping === 0 ? 'FREE' : '₹' + shipping}\n${discount > 0 ? '*Discount Applied:* -₹' + discount.toLocaleString('en-IN') + '\n' : ''}*Grand Total:* ₹${total.toLocaleString('en-IN')}\n\nHello! I would like to confirm this order. Please send your UPI QR / payment instructions and delivery estimate.`
+  );
+
+  // Auto-record order in backend database for admin tracking
+  try {
+    await fetch(`${API_BASE_URL}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'WhatsApp Direct Customer',
+        phone: 'Contact via WhatsApp',
+        orderNotice: 'Placed via 1-Click WhatsApp Checkout',
+        total: total,
+        subtotal: subtotal,
+        shipping: shipping,
+        discount: discount,
+        paymentMethod: 'whatsapp',
+        paymentStatus: 'Pending (WhatsApp Confirmation)',
+        status: 'Pending',
+        items: storeApp.cart,
+      })
+    });
+  } catch (err) {
+    console.warn("Backend order log warning:", err);
+  }
+
+  closeCart();
+  window.open(`https://wa.me/${storePhone}?text=${msg}`, '_blank');
+  storeApp.showToast('Redirecting to WhatsApp to complete your order...', 'success');
+}
+
+function shareOrderReceiptOnWhatsApp() {
+  const settings = storeApp.getSettings();
+  const phone = (settings.whatsappNumber || '919944910653').replace(/[^0-9]/g, '');
+  const invoiceBox = document.getElementById('orderInvoiceBox');
+  const text = encodeURIComponent('Hello! Here is my order confirmation receipt from Sree Meenakshi Handicrafts.');
+  window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+}
