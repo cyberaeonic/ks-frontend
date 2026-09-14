@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Sree Meenakshi Handicrafts</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Admin Stylesheet -->
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <!-- ===== SECURITY / LOGIN AUTH OVERLAY ===== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <img src="Pics/753857112_1733854944406453_8567350919718920667_n.jpg" alt="Logo" class="auth-logo" />
+      <h2>Admin Portal</h2>
+      <p>Enter your store management security PIN to access catalog, prices, and customer orders.</p>
+
+      <form class="auth-form" id="adminLoginForm">
+        <label for="adminPasswordInput">Admin Password / PIN</label>
+        <input type="password" id="adminPasswordInput" placeholder="Enter admin PIN" required autofocus />
+        <button type="submit" class="auth-btn">Unlock Dashboard 🔒</button>
+        <div class="auth-error" id="authError">Incorrect password. Please try again.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ADMIN LAYOUT ===== -->
+  <div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <img src="Pics/753857112_1733854944406453_8567350919718920667_n.jpg" alt="Logo" class="sidebar-logo" />
+        <div>
+          <h3>Sree Meenakshi</h3>
+          <span>Admin Control</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-tab="dashboard">
+          <span>📊</span>
+          <span>Overview</span>
+        </a>
+        <a class="nav-item" data-tab="products">
+          <span>🪵</span>
+          <span>Products &amp; Pricing</span>
+        </a>
+        <a class="nav-item" data-tab="orders">
+          <span>📦</span>
+          <span>Orders</span>
+        </a>
+        <a class="nav-item" data-tab="inquiries">
+          <span>💬</span>
+          <span>Inquiries</span>
+        </a>
+        <a class="nav-item" data-tab="faqs">
+          <span>❓</span>
+          <span>FAQ Questions</span>
+        </a>
+        <a class="nav-item" data-tab="settings">
+          <span>⚙️</span>
+          <span>Store Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" class="sidebar-btn-link">
+          <span>←</span>
+          <span>Visit Storefront</span>
+        </a>
+        <button class="sidebar-btn-link" onclick="adminApp.logout()" style="background:none;border:none;cursor:pointer;width:100%;text-align:left;">
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- Admin Header -->
+      <header class="admin-header">
+        <div class="header-title-wrap">
+          <h1 id="adminHeaderTitle">Dashboard Overview</h1>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn-admin btn-admin-outline" onclick="adminApp.exportOrdersToCSV()">
+            <span>📥</span> Export Orders (CSV)
+          </button>
+          <button class="btn-admin btn-admin-primary" onclick="adminApp.openAddProductModal()">
+            <span>+</span> Add Product
+          </button>
+        </div>
+      </header>
+
+      <!-- Admin Tab Body Container -->
+      <div class="admin-body">
+        
+        <!-- ===== TAB 1: DASHBOARD OVERVIEW ===== -->
+        <section class="tab-content active" id="tab-dashboard">
+          <!-- 4 Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box mb-terracotta">₹</div>
+              <div class="metric-data">
+                <h3 id="metricTotalRevenue">₹0</h3>
+                <span>Total Revenue</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box mb-green">📦</div>
+              <div class="metric-data">
+                <h3 id="metricTotalOrders">0</h3>
+                <span>Total Orders</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box mb-orange">🪵</div>
+              <div class="metric-data">
+                <h3 id="metricTotalProducts">0</h3>
+                <span>Active Catalog Pieces</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box mb-blue">💬</div>
+              <div class="metric-data">
+                <h3 id="metricTotalInquiries">0</h3>
+                <span>Customer Inquiries</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Store Info Banner -->
+          <div class="admin-card" style="margin-top:2rem;padding:1.8rem;">
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.6rem;">Handicraft Store Management Ready</h3>
+            <p style="color:#6C757D;font-size:0.9rem;line-height:1.6;margin-bottom:1.2rem;">
+              You have full real-time control over your storefront catalog. Adding or removing sculptures, changing prices, updating stock quantities, and configuring Razorpay keys will reflect on your live website instantly.
+            </p>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+              <button class="btn-admin btn-admin-primary" onclick="adminApp.switchTab('products')">Manage Products &amp; Prices →</button>
+              <button class="btn-admin btn-admin-outline" onclick="adminApp.switchTab('orders')">View Pending Orders →</button>
+              <button class="btn-admin btn-admin-outline" onclick="adminApp.switchTab('settings')">Configure Razorpay &amp; WhatsApp →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TAB 2: PRODUCTS & PRICING MANAGEMENT ===== -->
+        <section class="tab-content" id="tab-products">
+          <div class="admin-card">
+            <!-- Non-tech User Guidance Tip -->
+            <div style="background:#F4EBE2;border-left:4px solid #C47A5A;padding:0.9rem 1.2rem;border-radius:6px;margin-bottom:1.2rem;font-size:0.85rem;color:#5A4335;">
+              💡 <strong>Easy Product Arranging Tip:</strong> Use the <strong>▲ Move Up</strong> and <strong>▼ Move Down</strong> buttons to change product display sequence on your main website. Click <strong>"+ Add Product"</strong> to add new handicraft items.
+            </div>
+
+            <div class="card-header-bar">
+              <h2>Product Catalog &amp; Prices</h2>
+              <div class="table-controls">
+                <input type="text" class="admin-search-input" id="adminProductSearch" placeholder="Search by title or category..." />
+                <button class="btn-admin btn-admin-primary" onclick="adminApp.openAddProductModal()">+ Add Product</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th style="width:70px;text-align:center;">Arrange</th>
+                    <th>Image</th>
+                    <th>Title &amp; ID</th>
+                    <th>Category</th>
+                    <th>Price (INR)</th>
+                    <th>Stock</th>
+                    <th>Badge</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TAB 3: ORDERS MANAGEMENT ===== -->
+        <section class="tab-content" id="tab-orders">
+          <div class="admin-card">
+            <!-- Non-tech User Guidance Tip -->
+            <div style="background:#EBF5FB;border-left:4px solid #2980B9;padding:0.9rem 1.2rem;border-radius:6px;margin-bottom:1.2rem;font-size:0.85rem;color:#1B4F72;">
+              📦 <strong>Order Tracking &amp; Delivery:</strong> View customer phone numbers, full delivery addresses, and <strong>Razorpay Verified</strong> payment badges at a glance. Click 💬 to chat on WhatsApp or 🖨️ to print packing slip.
+            </div>
+
+            <div class="card-header-bar">
+              <h2>Customer Orders</h2>
+              <div class="table-controls">
+                <select class="admin-select" id="orderStatusFilter">
+                  <option value="all">All Orders</option>
+                  <option value="pending">Pending</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="text" class="admin-search-input" id="adminOrderSearch" placeholder="Search by Order ID, Name, Phone or Address..." />
+                <button class="btn-admin btn-admin-outline" onclick="adminApp.exportOrdersToCSV()">Export CSV 📥</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order &amp; Date</th>
+                    <th>Customer Name &amp; Phone</th>
+                    <th>Delivery Location / Address</th>
+                    <th>Payment Status (Razorpay)</th>
+                    <th>Total Amount</th>
+                    <th>Fulfillment</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TAB 4: INQUIRIES & MESSAGES ===== -->
+        <section class="tab-content" id="tab-inquiries">
+          <div class="admin-card">
+            <div class="card-header-bar">
+              <h2>Customer Inquiries &amp; Custom Requests</h2>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Phone / WhatsApp</th>
+                    <th>Category</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inquiriesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TAB: FAQ QUESTIONS MANAGEMENT ===== -->
+        <section class="tab-content" id="tab-faqs">
+          <div class="panel-card">
+            <div class="panel-card-head">
+              <div>
+                <h2>Frequently Asked Questions</h2>
+                <p>Manage customer questions and answers that appear on your storefront.</p>
+              </div>
+              <div class="card-head-actions">
+                <button class="btn-admin btn-admin-primary" onclick="adminApp.openAddFaqModal()">
+                  <span>+</span> Add FAQ Question
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th style="width:50px;text-align:center;">Order</th>
+                    <th style="width:30%;">Question</th>
+                    <th>Answer</th>
+                    <th style="width:120px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="faqsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TAB 5: STORE & PAYMENT SETTINGS ===== -->
+        <section class="tab-content" id="tab-settings">
+          <div class="settings-grid">
+            <!-- Payment & WhatsApp Configuration -->
+            <div class="settings-card">
+              <h3>Payment &amp; Communication</h3>
+              <p>Set your Razorpay API credentials and direct WhatsApp ordering number.</p>
+
+              <form id="settingsForm" onsubmit="adminApp.saveSettingsFromForm(event)">
+                <div class="form-group-admin">
+                  <label for="setRazorpayKey">Razorpay Key ID (Live or Test)</label>
+                  <input type="text" id="setRazorpayKey" placeholder="e.g. rzp_live_xxxxxxxx or rzp_test_xxxxxxxx" />
+                  <small style="color:#6C757D;font-size:0.75rem;margin-top:0.2rem;display:block;">
+                    Leave blank or test key to run in interactive sandbox simulation mode.
+                  </small>
+                </div>
+
+                <div class="form-group-admin" style="margin-top:0.5rem;">
+                  <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;">
+                    <div style="position:relative;display:inline-block;width:48px;height:26px;">
+                      <input type="checkbox" id="setRazorpayEnabled" style="opacity:0;width:0;height:0;position:absolute;">
+                      <span id="rzpToggleSlider" onclick="adminApp.toggleRazorpay()" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:26px;transition:0.3s;"></span>
+                      <span id="rzpToggleKnob" onclick="adminApp.toggleRazorpay()" style="position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;"></span>
+                    </div>
+                    <span style="font-weight:600;color:#2D2D2D;">Enable Razorpay Checkout</span>
+                  </label>
+                  <small style="color:#6C757D;font-size:0.75rem;margin-top:0.25rem;display:block;">
+                    Toggle ON to activate Razorpay payment in the storefront. Keep OFF to use WhatsApp-only checkout.
+                  </small>
+                </div>
+
+                <div class="form-group-admin">
+                  <label for="setWhatsappNumber">Store WhatsApp Phone Number (with country code)</label>
+                  <input type="text" id="setWhatsappNumber" placeholder="e.g. 919876543210" required />
+                </div>
+
+                <div class="form-group-admin">
+                  <label for="setStoreEmail">Store Notification Email</label>
+                  <input type="email" id="setStoreEmail" placeholder="info@sreemeenakshihandicrafts.com" />
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group-admin">
+                    <label for="setShippingFee">Flat Delivery Fee (₹)</label>
+                    <input type="number" id="setShippingFee" placeholder="150" />
+                  </div>
+                  <div class="form-group-admin">
+                    <label for="setFreeShippingThreshold">Free Delivery Above (₹)</label>
+                    <input type="number" id="setFreeShippingThreshold" placeholder="2999" />
+                  </div>
+                </div>
+
+                <div style="border-top:1px dashed #E9ECEF;margin:1.2rem 0;padding-top:1rem;">
+                  <h4 style="font-size:0.95rem;margin-bottom:0.3rem;color:#C47A5A;">📢 Top Announcement Banner</h4>
+                  <p style="font-size:0.78rem;color:#6C757D;margin-bottom:0.8rem;">Changes the banner shown at the very top of your storefront.</p>
+
+                  <div class="form-group-admin">
+                    <label for="setTopBannerText1">Banner Primary Message</label>
+                    <input type="text" id="setTopBannerText1" placeholder="e.g. ✨ Complimentary FREE Delivery on orders above ₹2,999" />
+                  </div>
+                  <div class="form-group-admin">
+                    <label for="setTopBannerHighlight">Banner Highlight / Promo Offer Tag</label>
+                    <input type="text" id="setTopBannerHighlight" placeholder="e.g. ✦ Use Coupon HERITAGE10 for 10% OFF" />
+                  </div>
+                </div>
+
+                <div style="border-top:1px dashed #E9ECEF;margin:1.2rem 0;padding-top:1rem;">
+                  <h4 style="font-size:0.95rem;margin-bottom:0.3rem;color:#C47A5A;">🎟️ Promo Coupons &amp; Discounts</h4>
+                  <p style="font-size:0.78rem;color:#6C757D;margin-bottom:0.8rem;">Set custom discount codes customers can apply in their cart.</p>
+
+                  <div class="form-grid-2">
+                    <div class="form-group-admin">
+                      <label for="setCouponCode">Primary Coupon Code</label>
+                      <input type="text" id="setCouponCode" placeholder="e.g. HERITAGE10" style="text-transform:uppercase;" />
+                    </div>
+                    <div class="form-group-admin">
+                      <label for="setCouponDiscountPct">Discount Percentage (%)</label>
+                      <input type="number" id="setCouponDiscountPct" placeholder="10" min="1" max="100" />
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group-admin">
+                      <label for="setWelcomeCouponCode">Welcome Coupon Code</label>
+                      <input type="text" id="setWelcomeCouponCode" placeholder="e.g. WELCOME5" style="text-transform:uppercase;" />
+                    </div>
+                    <div class="form-group-admin">
+                      <label for="setWelcomeDiscountPct">Welcome Discount (%)</label>
+                      <input type="number" id="setWelcomeDiscountPct" placeholder="5" min="1" max="100" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group-admin">
+                  <label for="setStoreName">Store Name</label>
+                  <input type="text" id="setStoreName" placeholder="Sree Meenakshi Handicrafts" />
+                </div>
+
+                <div class="form-group-admin">
+                  <label for="setAdminPin">Change Admin Password / PIN</label>
+                  <input type="text" id="setAdminPin" placeholder="Enter new PIN (min 4 chars)" />
+                </div>
+
+                <button type="submit" class="btn-admin btn-admin-primary" style="width:100%;margin-top:0.5rem;">
+                  Save Settings 💾
+                </button>
+              </form>
+            </div>
+
+            <!-- Database Backup & Factory Reset -->
+            <div class="settings-card">
+              <h3>Backup &amp; Maintenance</h3>
+              <p>Export your full database or reset store to original default collection.</p>
+
+              <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div style="background:#F8F9FA;padding:1.2rem;border-radius:10px;">
+                  <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">Export Database JSON</h4>
+                  <p style="font-size:0.8rem;color:#6C757D;margin-bottom:0.8rem;">Download a full backup of all products, orders, and inquiries.</p>
+                  <button class="btn-admin btn-admin-outline" onclick="adminApp.backupStoreData()">Download JSON Backup 📥</button>
+                </div>
+
+                <div style="background:#FFF3E0;padding:1.2rem;border-radius:10px;border:1px solid #FFE0B2;">
+                  <h4 style="font-size:0.95rem;margin-bottom:0.3rem;color:#E65100;">Reset Demo Catalog</h4>
+                  <p style="font-size:0.8rem;color:#6C757D;margin-bottom:0.8rem;">Restore original default products from Sree Meenakshi collection.</p>
+                  <button class="btn-admin btn-admin-outline" style="border-color:#ED6C02;color:#ED6C02;" onclick="adminApp.resetDemoCatalog()">Reset Default Catalog ↺</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== ADD / EDIT PRODUCT MODAL ===== -->
+  <div class="admin-modal-backdrop" id="productModal">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 id="productModalTitle">Add New Product</h3>
+        <button class="action-btn" onclick="adminApp.closeProductModal()">✕</button>
+      </div>
+
+      <form id="productForm" onsubmit="adminApp.saveProductFromForm(event)">
+        <div class="admin-modal-body">
+          <div class="form-group-admin">
+            <label for="prodTitleInput">Product Title *</label>
+            <input type="text" id="prodTitleInput" placeholder="e.g. Teak Wood Peacock Idol" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-admin">
+              <label for="prodCategoryInput">Category *</label>
+              <select id="prodCategoryInput" required>
+                <option value="Wood & Brass">Wood &amp; Brass</option>
+                <option value="Resin & Gold">Resin &amp; Gold</option>
+                <option value="Soapstone & Stone">Soapstone &amp; Stone</option>
+                <option value="Diya & Sacred">Diya &amp; Sacred</option>
+                <option value="Heritage Decor">Heritage Decor</option>
+              </select>
+            </div>
+            <div class="form-group-admin">
+              <label for="prodStockInput">Stock Quantity *</label>
+              <input type="number" id="prodStockInput" min="0" placeholder="10" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-admin">
+              <label for="prodPriceInput">Selling Price (₹) *</label>
+              <input type="number" id="prodPriceInput" min="1" placeholder="4500" required />
+            </div>
+            <div class="form-group-admin">
+              <label for="prodOriginalPriceInput">Original / Strikethrough Price (₹)</label>
+              <input type="number" id="prodOriginalPriceInput" min="0" placeholder="5200" />
+            </div>
+          </div>
+
+          <div class="form-group-admin">
+            <label for="prodDescInput">Product Description *</label>
+            <textarea id="prodDescInput" rows="3" placeholder="Artisanal carving details, materials, dimensions..." required></textarea>
+          </div>
+
+          <div class="form-group-admin">
+            <label>Product Image</label>
+            <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.5rem;">
+              <input type="file" id="prodImageFileInput" accept="image/*" style="font-size:0.82rem;" />
+            </div>
+            <input type="text" id="prodImageUrlInput" placeholder="Or enter Image URL (e.g. Pics/brass_diya_lamp.jpg)" />
+            
+            <div class="image-preview-box" id="productImagePreview">
+              <span style="color:#8A7564;font-size:0.85rem;">Upload Image or Enter URL</span>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-top:1rem;">
+            <div class="form-group-admin">
+              <label for="prodBadgeSelect">Product Highlight Badge</label>
+              <select id="prodBadgeSelect">
+                <option value="Standard">Standard Item</option>
+                <option value="Featured">Featured ★</option>
+                <option value="Best Seller">Best Seller 🔥</option>
+                <option value="Hot Sale">Hot Sale 🏷️</option>
+                <option value="New Arrival">New Arrival ✨</option>
+              </select>
+            </div>
+            <div class="form-group-admin" style="display:flex;align-items:center;padding-top:1.4rem;">
+              <label style="cursor:pointer;display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;margin-bottom:0;">
+                <input type="checkbox" id="prodFeaturedInput" style="width:auto;" />
+                Show on Homepage Showcase
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-admin btn-admin-outline" onclick="adminApp.closeProductModal()">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary">Save Product ✦</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== ORDER DETAILS MODAL ===== -->
+  <div class="admin-modal-backdrop" id="orderDetailsModal">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3>Order Details &amp; Packing Slip</h3>
+        <button class="action-btn" onclick="adminApp.closeOrderDetailsModal()">✕</button>
+      </div>
+      <div class="admin-modal-body" id="orderDetailsContent"></div>
+      <div class="admin-modal-footer">
+        <button class="btn-admin btn-admin-outline" onclick="window.print()">Print Packing Slip 🖨️</button>
+        <button class="btn-admin btn-admin-primary" onclick="adminApp.closeOrderDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD / EDIT FAQ MODAL ===== -->
+  <div class="admin-modal-backdrop" id="faqModal">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h3 id="faqModalTitle">Add FAQ Question</h3>
+        <button class="action-btn" onclick="adminApp.closeFaqModal()">✕</button>
+      </div>
+      <form id="faqForm" onsubmit="adminApp.saveFaqFromForm(event)">
+        <div class="admin-modal-body">
+          <div class="form-group-admin">
+            <label for="faqQuestionInput">Question *</label>
+            <input type="text" id="faqQuestionInput" placeholder="e.g. Do you offer custom gift packaging?" required />
+          </div>
+          <div class="form-group-admin">
+            <label for="faqAnswerInput">Answer *</label>
+            <textarea id="faqAnswerInput" rows="4" placeholder="e.g. Yes, we provide luxury festive gift wrapping with customized greeting tags..." required></textarea>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-admin btn-admin-outline" onclick="adminApp.closeFaqModal()">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary">Save FAQ 💾</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  
+
+  <!-- Admin Script Engine -->
+  <script>window.API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3001' : 'https://krishika-api.onrender.com';</script>
+  <script src="admin.js"></script>
+</body>
+</html>
