@@ -2663,3 +2663,20 @@ ul {
   }
 }
 
+
+
+/* Permanently block any Netlify preview badges / drawers / branding */
+[id*="netlify"],
+[class*="netlify"],
+[data-netlify-drawer],
+[data-testid*="feedback"],
+[data-testid*="drawer"],
+iframe[src*="netlify"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  z-index: -9999 !important;
+}
