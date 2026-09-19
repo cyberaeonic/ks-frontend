@@ -2857,3 +2857,35 @@ a.hero-btn:active,
     flex-shrink: 0;
   }
 }
+
+
+/* Compact Heritage Pillars */
+.heritage-pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.2rem 0;
+}
+@media (max-width: 600px) {
+  .heritage-pillars {
+    grid-template-columns: 1fr;
+  }
+}
+.pillar-card {
+  background: rgba(244, 237, 230, 0.6);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 122, 90, 0.15);
+}
+.pillar-card h4 {
+  font-size: 0.95rem;
+  color: var(--color-espresso, #2D2D2D);
+  margin: 0.3rem 0;
+  font-weight: 700;
+}
+.pillar-card p {
+  font-size: 0.82rem;
+  color: #6C757D;
+  margin: 0;
+  line-height: 1.4;
+}
