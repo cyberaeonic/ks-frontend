@@ -150,6 +150,44 @@
 
   <!-- ===== RAZORPAY PAYMENT GATEWAY SDK ===== -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- ===== ANTI-THIRD-PARTY BADGE KILLER ===== -->
+  <script>
+    (function() {
+      function removeBadges() {
+        document.querySelectorAll('iframe, div, a, button, span, netlify-drawer, [data-netlify-drawer]').forEach(el => {
+          const text = (el.innerText || el.textContent || '').toLowerCase();
+          const src = (el.getAttribute('src') || '').toLowerCase();
+          const id = (el.getAttribute('id') || '').toLowerCase();
+          const cls = (el.getAttribute('class') || '').toLowerCase();
+          const href = (el.getAttribute('href') || '').toLowerCase();
+
+          if (
+            text.includes('powered by netlify') ||
+            text.includes('netlify') && (cls.includes('badge') || id.includes('badge') || el.style.position === 'fixed') ||
+            src.includes('netlify') ||
+            id.includes('netlify') ||
+            cls.includes('netlify') ||
+            href.includes('netlify.com')
+          ) {
+            el.remove();
+          }
+        });
+      }
+
+      // Run on DOM events
+      document.addEventListener('DOMContentLoaded', removeBadges);
+      window.addEventListener('load', removeBadges);
+      setInterval(removeBadges, 200);
+
+      // Mutation Observer for instant kill
+      const obs = new MutationObserver(removeBadges);
+      if (document.documentElement) {
+        obs.observe(document.documentElement, { childList: true, subtree: true });
+      }
+    })();
+  </script>
+
 </head>
 <body>
 

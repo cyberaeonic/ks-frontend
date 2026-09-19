@@ -2680,3 +2680,25 @@ iframe[src*="netlify"] {
   width: 0 !important;
   z-index: -9999 !important;
 }
+
+
+/* Absolute suppression of any Netlify badge / drawer */
+iframe[src*="netlify"],
+netlify-drawer,
+[data-netlify-drawer],
+[id*="netlify"],
+[class*="netlify"],
+a[href*="netlify.com"],
+div[class*="feedback-badge"],
+div[id*="feedback-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0) !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  top: -99999px !important;
+  left: -99999px !important;
+}
